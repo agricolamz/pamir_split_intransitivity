@@ -1,0 +1,7 @@
+project:
+  title: "Pamir split intransitivity"
+  output-dir: ./docs
+  
+format: 
+  html:
+    theme: litera   

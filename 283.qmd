@@ -1,0 +1,96 @@
+---
+format: html
+echo: false
+message: false
+warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| include: false
+
+library(tidyverse)
+library(lingtypology)
+readxl::read_xlsx("data.xlsx") |> 
+  mutate(`Basid Bartangi (3sg =i)` = "not applicable",
+         `Shughni transitivity (OBL_S)` = "not applicable") |> 
+  filter(ID == 283) |> 
+  rename(title = `Shughni latin`,
+         definition_shugni_f = `Shughni meaning fieldwork`,
+         form_shugni_f = `Shughni form field`,
+         definition_shugni = `meaning (dict)`,
+         form_sipanj = `Sipanj Bartangi latin`,
+         definition_sipanj = `Bartangi meanings (field)`,
+         form_basid = `Basid Bartangi latin`,
+         definition_basid = `Basid meanings field`,
+         form_rushani = `Rushani latin`,
+         definition_rushani = `rushani meanings field`,
+         source = `Source for Shughni quest`) |> 
+  select(source, title, definition_shugni, form_shugni_f, definition_shugni_f, form_sipanj, definition_sipanj, form_basid, definition_basid, form_rushani, definition_rushani, `Shughni transitivity`, `Siponj Bartangi transitivity (3sg =i)`, `Rushani transitivity (3sg =i)`, `Basid Bartangi (3sg =i)`, `Shughni transitivity (OBL_S)`, `Siponj Bartangi transitivity (OBL_S)`, `Rushani transitivity (OBL_S)`, `Basid Bartangi transitivity (OBL_S)`) ->
+  df
+
+tibble(language = c("Shughni", "Siponj Bartangi", "Rushani", "Basid Bartangi"),
+       glottolog_name = c("Shughni", "Bartangi", "Rushani", "Bartangi"),
+       latitude = c(37.493060, 38.062618, 37.944170, 38.108944),
+       longitude = c(71.553330, 71.874880, 71.557500, 72.162389)) ->
+  coordinates
+```
+
+# `r df$title` --- `r df$definition_shugni` (`r df$source`)
+
+- Shughni (fieldwork): `r df$form_shugni_f` --- `r df$definition_shugni_f`
+- Sipanj Bartangi: `r df$form_sipanj` --- `r df$definition_sipanj`
+- Basid Bartangi: `r df$form_basid` --- `r df$definition_basid`
+- Rushani: `r df$form_rushani` --- `r df$definition_rushani`
+
+::: {.panel-tabset}
+
+## verbal agreement
+
+```{r}
+
+df |> 
+  select(`Shughni transitivity`, `Siponj Bartangi transitivity (3sg =i)`, `Rushani transitivity (3sg =i)`, `Basid Bartangi (3sg =i)`) |>
+  pivot_longer(names_to = "language", values_to = "value", cols = everything()) |> 
+  mutate(language = str_extract(language, "(Shughni)|(Siponj Bartangi)|(Rushani)|(Basid Bartangi)")) |> 
+  left_join(coordinates) ->
+  data_for_map
+
+library(lingtypology)
+
+map.feature(languages = data_for_map$glottolog_name,
+            width = 10,
+            latitude = data_for_map$latitude,
+            longitude = data_for_map$longitude,
+            label = data_for_map$language,
+            label.fsize = 19, 
+            features = data_for_map$value,
+            label.hide = FALSE,
+            tile = "Esri.WorldTopoMap")
+```
+
+## case marking
+
+```{r}
+df |> 
+  select(`Shughni transitivity (OBL_S)`, `Siponj Bartangi transitivity (OBL_S)`, `Rushani transitivity (OBL_S)`, `Basid Bartangi transitivity (OBL_S)`) |>
+  pivot_longer(names_to = "language", values_to = "value", cols = everything()) |> 
+  mutate(language = str_extract(language, "(Shughni)|(Siponj Bartangi)|(Rushani)|(Basid Bartangi)")) |> 
+  left_join(coordinates) ->
+  data_for_map
+
+library(lingtypology)
+
+map.feature(languages = data_for_map$glottolog_name,
+            width = 10,
+            latitude = data_for_map$latitude,
+            longitude = data_for_map$longitude,
+            label = data_for_map$language,
+            label.fsize = 19,
+            features = data_for_map$value,
+            label.hide = FALSE, 
+            tile = "Esri.WorldTopoMap")
+```
+
+:::
