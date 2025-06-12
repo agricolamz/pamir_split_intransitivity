@@ -1,7 +1,15 @@
 project:
   title: "Pamir split intransitivity"
   output-dir: ./docs
-  
+
+website:
+  navbar:
+    left:
+      - text: "Features"
+        icon: fa-atlas
+        href: ./features.html  
+
+
 format: 
   html:
     theme: litera   

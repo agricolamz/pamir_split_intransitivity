@@ -1,0 +1,32 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# Features
+
+```{r}
+#| echo: false
+#| message: false
+
+library(tidyverse)
+library(DT)
+
+# table with features
+db <- readxl::read_xlsx("data.xlsx")
+
+db |>
+  select(ID, `Shughni latin`, `meaning (dict)`, `Number of cognates`) |> 
+  rename(form = `Shughni latin`,
+         meaning = `meaning (dict)`,
+         `number of cognates` = `Number of cognates`) |> 
+  arrange(desc(`number of cognates`)) |> 
+  mutate(form = str_c("<a href='", ID, ".html'>", form, "</a>")) |>
+  select(-ID) |>
+  DT::datatable(filter = 'top', 
+                escape = FALSE,
+                rownames = FALSE,
+                options = list(pageLength = 150, 
+                               autoWidth = TRUE,
+                               dom = 'fltpi'))
+```
