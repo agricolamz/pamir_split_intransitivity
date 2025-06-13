@@ -3,7 +3,6 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-# Features
 
 ```{r}
 #| echo: false
